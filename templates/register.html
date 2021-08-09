@@ -1,0 +1,151 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <!-- Required meta tags -->
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+  <!-- Bootstrap CSS -->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+    integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css">
+  <title>Register</title>
+</head>
+<style>
+  .form-group {
+    position: relative;
+  }
+
+  .form-control {
+    margin-bottom: 22px;
+  }
+
+  .invalid-feedback,
+  .valid-feedback {
+    position: absolute;
+    bottom: -20px;
+  }
+</style>
+
+<body>
+
+  <!-- Optional JavaScript -->
+  <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+  <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
+    integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
+    crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+    integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+    crossorigin="anonymous"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+    integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+    crossorigin="anonymous"></script>
+
+  <div class="alert alert-warning " role="alert">
+    {% for message in messages %}
+    <p>{{message}}</p>
+    {% endfor %}
+  </div>
+
+  <div class="container">
+    <div class="row">
+      <div class="col-md-5 col-lg-5 mx-auto">
+        <h1>Register Here</h1>
+
+        <form action="register" class="needs-validation mb-4" method="post">
+          {% csrf_token %}
+          <div class="form-group">
+            <label>Username</label>
+            <input type="text" required minlength="5" class="form-control" name="username" placeholder="Enter Username">
+          </div>
+          <div class="form-group">
+            <label>Email address</label>
+            <input type="email" required class="form-control" name="email" placeholder="Enter email">
+          </div>
+          <div class="form-group">
+            <label>Password</label>
+            <input type="password" minlength="8" pattern="^(?=.*?[a-zA-Z])(?=.*?[0-9])(?=.*?)[a-zA-Z0-9]{8,16}$"
+              title="please enter alphanumeric, not special characters and atleast 8 characters" required
+              class="form-control" name="password1" placeholder="Password">
+          </div>
+          <div class="form-group">
+            <label>Confirm Password</label>
+            <input type="password" oninput="checkPassword(this.value)" minlength="8"
+              pattern="^(?=.*?[a-zA-Z])(?=.*?[0-9])(?=.*?)[a-zA-Z0-9]{8,16}$"
+              title="please enter alphanumeric, not special characters and atleast 8 characters" required
+              class="form-control" name="password2" placeholder="Confirm Password">
+            <div class="invalid-feedback">
+              Confirm password does not match. Enter correct password.
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Arithmetic Captcha</label>
+            <br>
+            <strong class="operand fw-bolder"></strong>
+            <strong class="fw-bolder">+</strong>
+            <strong class="operand fw-bolder"></strong>
+            <div class="input-group">
+              <div onclick="refreshOperands()" class="btn btn-info input-group-text"><i class="bi bi-arrow-repeat"></i>
+              </div>
+              <input type="number" id="varify" style="display: inline;width: 20%;" class="form-control" name="captcha"
+                required onchange="verifyCaptcha(this.value)">
+            </div>
+            <div class="valid-feedback">
+              Success Captcha
+            </div>
+            <div class="invalid-feedback">
+              Not Valid , Retry
+            </div>
+          </div>
+          <p> Already have an account ? <a href="login.html">Login</a> </p>
+          <button type="submit" class="btn btn-outline-primary">Register</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</body>
+<script>
+  var error = document.getElementsByClassName('invalid-feedback');
+  var success = document.getElementsByClassName('valid-feedback')[0];
+  var operand = document.getElementsByClassName('operand');
+  var cap = document.getElementById('varify');
+  var a, b;
+  function refreshOperands() {
+    a = operand[0].innerHTML = Math.ceil(Math.random() * 20);
+    b = operand[1].innerHTML = Math.ceil(Math.random() * 20);
+    cap.value = "";
+  }
+
+  refreshOperands();
+
+  function checkPassword(cp) {
+    var pass = document.getElementsByName('password1')[0].value;
+    if (pass != cp) {
+      error[0].classList.add("d-block");
+    }
+    if (pass == cp) {
+      error[0].classList.remove("d-block");
+    }
+    console.log(pass, cp);
+  }
+
+  function verifyCaptcha(val) {
+    if (parseInt(val) != parseInt(a) + parseInt(b)) {
+      error[1].classList.add("d-block");
+      success.classList.remove("d-block");
+      refreshOperands();
+      setTimeout(function () {
+        error[1].classList.remove("d-block");
+      }, 1090);
+
+    }
+    if (parseInt(val) == parseInt(a) + parseInt(b)) {
+      error[1].classList.remove("d-block");
+      success.classList.add("d-block");
+    }
+
+  }
+</script>
+
+</html>
